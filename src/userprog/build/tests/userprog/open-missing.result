@@ -6,7 +6,6 @@ Acceptable output:
   (open-missing) end
   open-missing: exit(0)
 Differences in `diff -u' format:
-+ Stuff! 
   (open-missing) begin
 - (open-missing) end
 - open-missing: exit(0)

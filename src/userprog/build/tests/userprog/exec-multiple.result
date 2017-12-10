@@ -14,7 +14,6 @@ Acceptable output:
   (exec-multiple) end
   exec-multiple: exit(0)
 Differences in `diff -u' format:
-+ Stuff! 
   (exec-multiple) begin
 - (child-simple) run
 - child-simple: exit(81)

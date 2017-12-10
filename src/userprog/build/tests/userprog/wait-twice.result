@@ -10,7 +10,6 @@ Acceptable output:
   (wait-twice) end
   wait-twice: exit(0)
 Differences in `diff -u' format:
-+ Stuff! 
   (wait-twice) begin
 - (child-simple) run
 - child-simple: exit(81)

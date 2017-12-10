@@ -74,37 +74,11 @@ static bool load(const char *cmdline, void (**eip) (void), void **esp);
 static void
 push_command(const char *cmdline, void **esp)
 {
-    int argCount = 1;
-    printStuff();
-    void* argAddys[argCount];
-//    printf("Base Address: 0x%08x\n", *esp);
-//Get length of cmdline argument, add 1 for empty space then
-//decrement esp by that amount
-    int len = strlen(cmdline)+1;
-    *esp -= len;
-    memcpy(*esp, cmdline,len);
-    argAddys[0] = *esp;
-//move esp to next memory spot that is a divisor of 4
-    *esp = (void*) ((unsigned int) (*esp) & 0xfffffffc);
-//move esp down 4 more for a null sentinel
-    *esp-=4;
-    *((uint32_t*) *esp) = 0;
-//dec esp by size of address of first entry
-//then copy the address there
-    *esp-=4;
-//    memcpy(*esp, argAddys[0], 4);
-    *((void**) *esp) = (argAddys[0]);
-//similar idea to last decrement
-    void *newAddyPoint = *esp;
-    *esp -= 4;
-    *((void**) *esp) = (*esp + 4);
-//Decrement 4 and then place argcount
-    *esp -= 4;
-    *((int*) *esp) = argCount;
-//Fake return address
-    *esp -=4;
-    *((int*) *esp) = 0;
-    *esp = (void*) ((unsigned int) (*esp) & 0xfffffffc);
+    printf(cmdline);
+    printf("The argcounttttVVVBBBBVVVV: %d\n", getArgc(cmdline));
+    setStack(cmdline, esp);
+
+
     // Some of you CMPS111 Lab 3 code will go here.
     //
     // One approach is to immediately call a function you've created in a
@@ -135,9 +109,9 @@ tid_t
 process_execute(const char *cmdline)
 {
 #ifndef COMMAND_ARGUMENTS
-//    printf(cmdline);
-//    printf("THAT WAS THE CMDLINE!!!!!!!!\n");
     char space[] = " ";
+    int argc = getArgc(cmdline);
+//    int argc = getArgc(cmdline);
     if (strcspn(cmdline,space) != strlen(cmdline)) {
         printf("Command line arguments not implemented, exiting...\n");
 	return TID_ERROR;
@@ -177,6 +151,7 @@ start_process(void *cmdline)
     pif.gs = pif.fs = pif.es = pif.ds = pif.ss = SEL_UDSEG;
     pif.cs = SEL_UCSEG;
     pif.eflags = FLAG_IF | FLAG_MBS;
+
     success = load(cmdline, &pif.eip, &pif.esp);
     if (success) {
         push_command(cmdline, &pif.esp);
@@ -334,7 +309,6 @@ load(const char *file_name, void (**eip) (void), void **esp)
 
     /* Allocate and activate page directory, as well as SPTE. */
     t->pagedir = pagedir_create();
-
     if (t->pagedir == NULL)
         goto done;
     process_activate();
